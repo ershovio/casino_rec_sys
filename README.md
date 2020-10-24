@@ -30,15 +30,16 @@ The whole training pipeline can be found in [train_pipeline](train_pipeline.py).
 
 Example of searching coefficients for the hybrid model can be found in [train_eval](train_eval.ipynb).
 
-## Evaluation
+## [Evaluation](train_pipeline.py#L62)
 
 ### Test dataset creation
 * [Split users on test and train parts](user_data_preprocessing.py#L28)
-* For each user in the test part treat `n` oldest events 
-as "features" and the rest events as "labels"
-* Create user-item matrix using "feature" events
+* [For each user in the test part treat `n` oldest events 
+as "features" and the rest events as "labels"](user_data_preprocessing.py#L28)
+* [Create user-item matrix using "feature" events](user_data_preprocessing.py#L86)
 
 ### Metrics calculation
-* Compute prediction using user-item matrix from the previous part
-* Computer `Precision@K` metric using "labels" part from the previous part
-
+* Compute prediction using user-item matrix from the previous part.
+* Computer [`Precision@K`](metrics.py) metric using "labels" part from the previous part.
+### Metrics
+`0.459` `Precision@5` best result from [train_eval](train_eval.ipynb)
