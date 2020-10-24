@@ -4,6 +4,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 from scipy.sparse import lil_matrix, spmatrix
+from sklearn.preprocessing import StandardScaler
 
 
 def read_users_data(data_path: str) -> pd.DataFrame:
@@ -26,9 +27,9 @@ def read_users_data(data_path: str) -> pd.DataFrame:
 
 def split_users_on_train_test(
         df: pd.DataFrame,
-        test_ratio: float = 0.05,
-        lower_bound: int = 3,
-        upper_bound: int = 200
+        test_ratio: float,
+        lower_bound: int,
+        upper_bound: int
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Split users dataframe (created by `read_users_data` method) on train and test parts
@@ -51,14 +52,16 @@ def split_users_on_train_test(
 
 def create_test_dateset(
         df: pd.DataFrame,
+        scaler: StandardScaler,
         n_items: int,
-        fl_ratio: float = 0.75
+        fl_ratio: float
 ) -> Tuple[spmatrix, pd.Series]:
     """
     Creates test data from a dataframe in this way:
     a user's events are sorted by timestamp and then
     the first part is treated as "features" and the last part is treated as "labels"
     :param df: users dataframe (created by `read_users_data` method)
+    :param scaler: scaler that was trained using train data
     :param n_items: number of items in collaborative filtering weights matrix
     :param fl_ratio: what ratio the "feature" part will have
     :return:  tuple of (features, labels)
@@ -76,12 +79,33 @@ def create_test_dateset(
         cnt = Counter(row["test_events"])
         for k, v in cnt.items():
             matrix[ind, k] = v
+    matrix = scaler.transform(matrix)
     return matrix, df["label"]
 
 
+def create_user_item_matrix(df: pd.DataFrame) -> Tuple[spmatrix, StandardScaler]:
+    """
+    Creates user item matrix from users dataframe
+    :param df: users dataframe (created by `read_users_data` method)
+    :return: user-item matrix where m[i,j]=k means that i user plays j game k times
+    and Scaler to scale test dataset
+    """
+    number_of_rows = df.index.max() + 1
+    number_of_columns = df["gamecode"].apply(lambda x: max(x)).max() + 1
+    user_item_matrix = lil_matrix((number_of_rows, number_of_columns))
+    for i, row in df.iterrows():
+        cnt = Counter(row["gamecode"])
+        for k, v in cnt.items():
+            user_item_matrix[i, k] = v
+    user_item_matrix = user_item_matrix.tocsr()
+    scaler = StandardScaler(with_mean=False)
+    user_item_matrix = scaler.fit_transform(user_item_matrix)
+    return user_item_matrix, scaler
+
+
 def create_small_users_dataset(
-        data_path: str = "data/user_plays_enc.csv",
-        new_path: str = "data/user_plays_enc_small.csv",
+        data_path: str,
+        new_path: str,
         number_of_events: int = 50000
 ):
     """
