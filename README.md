@@ -40,6 +40,6 @@ as "features" and the rest events as "labels"](user_data_preprocessing.py#L28)
 
 ### Metrics calculation
 * Compute prediction using user-item matrix from the previous part.
-* Computer [`Precision@K`](metrics.py) metric using "labels" part from the previous part.
+* Compute [`Precision@K`](metrics.py) metric using "labels" part from the previous part.
 ### Metrics
 `0.457` `Precision@5` best result from [train_eval](train_eval.ipynb)
