@@ -25,6 +25,13 @@ They have pretty similar logic when data from corresponding csv files are used
 to compute an item-item similarity matrix.
 Data preprocessing for this part can be found in [game_data_preprecessing.py](game_data_preprecessing.py)
 
+## Set up
+* Install Python 3.8
+* Create and activate virtual environment
+* `pip install -U -r requirements.txt`
+* Configure data paths and other settings in `config.yml`
+* Run training via `python train_pipeline.py`
+
 ## Training
 The whole training pipeline can be found in [train_pipeline](train_pipeline.py).
 
