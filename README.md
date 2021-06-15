@@ -1,4 +1,5 @@
 # Recommender system for casino
+The recommender system predicts in which games a user might want to play in an online casino.
 
 ## Algorithm
 The system uses a hybrid weighted model that consists of 3 inner algorithms.
